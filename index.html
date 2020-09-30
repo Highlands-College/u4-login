@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+</head>
+<body>
+    <div id="app">
+        <div v-if="!loggedIn">
+            <input :disabled="locked" type="text" v-model="auth.user" placeholder="Username" />
+            <input :disabled="locked" type="text" v-model="auth.pass" placeholder="Password" />
+            <button :disabled="locked" @click="login()">Login</button>
+        </div>
+        <p v-if="error">{{ message }}</p>
+        <p v-else-if="locked">Account locked</p>
+        <div v-else-if="loggedIn">
+            <p>Logged in as Rick Astley!</p>
+            <button type="button" name="restart" @click="location.reload();">Go to login</button>
+        </div>
+    </div>
+
+    <script>
+        const auth = {
+            user: 'rick astley',
+            pass: 'abc123'
+        }
+
+        const app = new Vue({
+            el: '#app',
+            data: {
+                auth: {
+                    user: null,
+                    pass: null
+                },
+                attempts: 2,
+                error: false,
+                locked: false,
+                loggedIn: false
+            },
+            computed: {
+                message() {
+                    return `Wrong credentials. ${this.attempts + 1} attemps remaining`
+                }
+            },
+            methods: {
+                login() {
+                    if (this.attempts <= 0) {
+                        this.locked = true
+                        this.error = false
+                    } else if (this.auth.user !== auth.user || this.auth.pass !== auth.pass) {
+                        this.attempts--
+                        this.error = true
+                    } else {
+                        this.locked = false
+                        this.error = false
+                        this.loggedIn = true
+                    }
+                }
+            }
+        })
+    </script>
+</body>
+</html>
